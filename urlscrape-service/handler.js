@@ -1,7 +1,7 @@
 const cheerio = require('cheerio');
 const request = require('request');
 
-module.exports.hello = async (event, context, callback) => {
+module.exports.scraper = async (event, context, callback) => {
   //make a new request to the URL provided in the HTTP POST request
   request(req.body.url, (error, responseHtml) => {
     let resObj = {};
