@@ -1,0 +1,19 @@
+service: urlscrape
+frameworkVersion: '>=1.1.0 <2.0.0'
+plugins:
+  - serverless-offline
+
+provider:
+  name: aws
+  runtime: nodejs10.x
+  stage: dev
+  region: us-east-2
+
+functions:
+  scraper:
+    handler: handler.scraper
+    description: scrape metadata from a given webpage url.
+    events:
+      - http:
+          path: scrape
+          method: post
