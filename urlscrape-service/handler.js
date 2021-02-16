@@ -1,11 +1,24 @@
 const cheerio = require('cheerio');
 const axios = require('axios');
 
-module.exports.scraper = async (event, context, callback) => {
+exports.scrapper = async (event, context, callback) => {
   context.callbackWaitsForEmptyEventLoop = false;
   let resObj = {};
-
-  await axios(JSON.parse(event.body).url)
+  let scrapped = {};
+  try{
+    const requestObj= JSON.parse(event.body);
+    if(!(requestObj.url)||requestObj.url===""||requestObj.url===null){
+      scrapped = {
+        statusCode: 412,
+        body: "Missing url in the request body"
+    };
+    return {
+      statusCode:412,
+      body:JSON.stringify(scrapped)
+    }
+    }
+    else{
+  await axios(requestObj.url)
     .then(response => {
       const html = response.data;
       const $ = cheerio.load(html);
@@ -49,11 +62,27 @@ module.exports.scraper = async (event, context, callback) => {
           resObj.images.push($($images[i]).attr('src'));
         }
       }
+      scrapped = {
+        statusCode: 200,
+        body: resObj
+    };
     })
-    .catch(console.error);
-  let res = {
-    statusCode: 200,
-    body: JSON.stringify(resObj),
-  };
-  return res;
+    .catch(error => {
+      scrapped = {
+          statusCode: error.response.status || 500,
+          body: error.response.statusText || "Something went wrong"
+      }
+  })
+  return {
+    statusCode:scrapped.statusCode,
+    body:JSON.stringify(scrapped)
+  }
+    }
+} catch (error) {
+  return {
+    statusCode: 500,
+      body: "Internal Server Error"
+  }
+}
+
 };
