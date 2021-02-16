@@ -1,17 +1,17 @@
 service: urlscrape
-frameworkVersion: '>=1.1.0 <2.0.0'
+frameworkVersion: '>=1.1.0 <3.0.0'
 plugins:
   - serverless-offline
 
 provider:
   name: aws
-  runtime: nodejs10.x
+  runtime: nodejs12.x
   stage: dev
   region: us-east-2
 
 functions:
   scraper:
-    handler: handler.scraper
+    handler: handler.scrapper
     description: scrape metadata from a given webpage url.
     events:
       - http:
